@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectAppointments } from '../store/appointments.selector';
-import { Appointment } from 'src/app/models/appointment.interfaces';
 import { deleteAppointment, updateAppointment } from '../store/appointments.action';
 import { Router } from '@angular/router';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmTimechangeComponent } from '../confirm-timechange/confirm-timechange.component';
+import { Appointment, AppointmentDate } from '../../../models/appointment.interfaces';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-appointments-calender',
   templateUrl: './appointments-calender.component.html',
-  styleUrls: ['./appointments-calender.component.css']
+  styleUrls: ['./appointments-calender.component.css'],
+  // Preventing unnecessary chnage detection for Performance Optimisation.
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppointmentsCalenderComponent implements OnInit {
   today: Date;
@@ -19,11 +22,11 @@ export class AppointmentsCalenderComponent implements OnInit {
   currentYear: number;
   currentMonth: number;
   days: number[] = [];
-  dates: { day: number, appointments: Appointment[] }[] = [];
+  dates: AppointmentDate[] = [];
   daysList: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   monthsList: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-  constructor(private store: Store, private router:Router, private dialog:MatDialog) { 
+  subscriptions: Subscription[] = [];
+  constructor(private store: Store, private router:Router, private dialog:MatDialog,private cdr: ChangeDetectorRef) { 
     this.today = new Date();
     this.currentYear = this.today.getFullYear();
     this.currentMonth = this.today.getMonth();
@@ -36,12 +39,14 @@ export class AppointmentsCalenderComponent implements OnInit {
   }
 
   getAppointments() {
-    this.store.select(selectAppointments).subscribe((res) => {
+    const subscription = this.store.select(selectAppointments).subscribe((res) => {
       if (!res) return;
       this.appointments = res;  
+      this.cdr.markForCheck();
       this.appendAppointments();
-      console.log(res)
+      this.cdr.markForCheck();
     })
+    this.subscriptions.push(subscription);
   }
 
   
@@ -94,16 +99,6 @@ export class AppointmentsCalenderComponent implements OnInit {
     return result;
   }
 
-  getToolTip(appointment:Appointment) : string {
-    const toolTip = `
-    Title : ${appointment.title},
-    \nDescription : ${appointment.desc},
-    \nTime : ${appointment.time},
-    \nBooked By : ${appointment.userName}
-    `
-    return toolTip
-  }
-
   updateAppointment(appointment:Appointment) {
     this.router.navigate(['/appointments/edit', appointment.id]);
   }
@@ -111,6 +106,7 @@ export class AppointmentsCalenderComponent implements OnInit {
   deleteAppointment(appointment:Appointment) {
     this.store.dispatch(deleteAppointment({ id: appointment.id }));
   }
+
   onDrop(event: CdkDragDrop<Appointment[]>) {
     const currentContainerDate = JSON.parse((event.container.element.nativeElement as HTMLElement).getAttribute('date') ?? '');
     const appointmentId = parseInt((event.item.element.nativeElement as HTMLElement).getAttribute('appointment-id') ?? '') ;
@@ -132,7 +128,8 @@ export class AppointmentsCalenderComponent implements OnInit {
     })
 
     dialogRef.afterClosed().subscribe((data: Appointment) => { 
-      this.store.dispatch(updateAppointment({data}))
+      this.store.dispatch(updateAppointment({ data }));
+      this.cdr.markForCheck();
     })
   }
 
@@ -141,5 +138,34 @@ export class AppointmentsCalenderComponent implements OnInit {
     this.currentYear = this.today.getFullYear();
     this.initCalender();
   }
+  
+  getToolTip(appointment:Appointment) : string {
+    const toolTip = `
+    Title : ${appointment.title},
+    \nDescription : ${appointment.desc},
+    \nTime : ${appointment.time},
+    \nBooked By : ${appointment.userName}
+    `
+    return toolTip
+  }
+  isToday(date:AppointmentDate) {
+    return this.getDateForDay(date.day).toLocaleDateString() === this.today.toLocaleDateString();
+  }
+  
+  // For Performance Optimization
+  trackByDay(index:number,date:AppointmentDate) : number {
+    return date.day;
+  }
 
+  // For Performance Optimization
+  trackById(index: number, appointment: Appointment) : number {
+    return appointment.id;
+  }
+
+  ngOnDestroy() {
+    // Preventing Memory Leaks due to unsubscribed observables
+    this.subscriptions.forEach((subsription: Subscription) => {
+      subsription.unsubscribe();
+    });
+  }
 }

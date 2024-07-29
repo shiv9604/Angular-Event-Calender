@@ -19,3 +19,13 @@
     justify-content: space-between;
     width: 100%;
 }
+
+.back-btn{
+    position: absolute;
+    left: 3%;
+    
+}
+
+.back-btn mat-icon{
+    font-size: 26px;
+}

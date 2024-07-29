@@ -6,6 +6,11 @@ import { AppointmentFormComponent } from './appointment-form/appointment-form.co
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'calender',
+    pathMatch : 'full'
+  },
+  {
+    path: 'calender',
     component : AppointmentsCalenderComponent    
   },
   {

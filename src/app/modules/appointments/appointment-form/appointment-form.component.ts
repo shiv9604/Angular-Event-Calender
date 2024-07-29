@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectAppointmentById, selectAppointments } from '../store/appointments.selector';
 import { bookAppointment, updateAppointment } from '../store/appointments.action';
 import { Appointment } from 'src/app/models/appointment.interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first } from 'rxjs';
+import { Subscription, first } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-appointment-form',
   templateUrl: './appointment-form.component.html',
-  styleUrls: ['./appointment-form.component.css']
+  styleUrls: ['./appointment-form.component.css'],
+  // Preventing unnecessary chnage detection for Performance Optimisation.
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppointmentFormComponent implements OnInit {
   today: Date = new Date();
@@ -25,8 +28,8 @@ export class AppointmentFormComponent implements OnInit {
   appointments!: Appointment[];
   lastInserted!: Appointment;
   toUpdate!: Appointment;
-
-  constructor(private store:Store,private router:Router, private route:ActivatedRoute) { }
+  subsriptions: Subscription[] = [];
+  constructor(private store:Store,private router:Router, private route:ActivatedRoute, private cdr:ChangeDetectorRef, private location:Location) { }
 
   ngOnInit(): void {
     this.getAppointments();
@@ -34,17 +37,19 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   getAppointments() {
-    this.store.select(selectAppointments).subscribe((res) => {
+    const subscription = this.store.select(selectAppointments).subscribe((res) => {
       if (!res) return;
       this.appointments = res;  
-      console.log(res)
       let reverseSorted = [...this.appointments].sort((a, b) => b.id - a.id);
       this.lastInserted = reverseSorted[0];
+      this.cdr.markForCheck();
     })
+    this.subsriptions.push(subscription);
   }
 
   checkIfUpdate() {
     let id = this.route.snapshot.params['id'];
+    // Unsubscribing observable after getting first value.
     this.store.select(selectAppointmentById, { id }).pipe(first()).subscribe((res) => {
       if (!res) return;
       this.toUpdate = res as Appointment;
@@ -56,6 +61,7 @@ export class AppointmentFormComponent implements OnInit {
         date: new Date(this.toUpdate.date),
         time : this.toUpdate.time
       })
+      this.cdr.markForCheck();
     })
   }
 
@@ -69,7 +75,6 @@ export class AppointmentFormComponent implements OnInit {
     appointment.date = new Date(appointment.date).toLocaleDateString();
     appointment.id = this.lastInserted.id + 1;
     this.store.dispatch(bookAppointment({ data: appointment }));
-    console.log(this.appointmentForm.value);
     this.router.navigate(['appointments']);
   }
 
@@ -89,7 +94,21 @@ export class AppointmentFormComponent implements OnInit {
   getControl(name:string): AbstractControl | null{
     return this.appointmentForm.get(name);
   }
+
+  back() {
+    this.location.back();
+  }
+
+  get isValid(): boolean {
+    return this.appointmentForm.valid
+  }
   
+  ngOnDestroy() {
+    // Preventing Memory Leaks due to unsubscribed observables
+    this.subsriptions.forEach(subscription => {
+      subscription.unsubscribe()
+    });
+  }
 
 
 }

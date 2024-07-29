@@ -7,3 +7,8 @@ export interface Appointment{
     desc: string,
     time : string
 }
+
+export interface AppointmentDate{
+    day: number,
+    appointments: Appointment[]
+}

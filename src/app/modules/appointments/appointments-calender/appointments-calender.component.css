@@ -5,6 +5,10 @@
     text-align: center;
 }
 
+.header :last-child{
+    width: min-content;
+}
+
 .header-actions{
     width: 100%;
     position: absolute;
@@ -17,9 +21,7 @@
     cursor: pointer !important;
 }
 
-.today{
-    background-color: rgba(2, 176, 219, 0.705);
-}
+
 
 .weekdays{
     border-bottom: 1px solid gray;
@@ -95,4 +97,8 @@
     min-width: 0px !important;
     padding: 0px !important;
     line-height: 0px !important;
+}
+
+.today{
+    background-color: rgba(2, 176, 219, 0.705);
 }

@@ -13,10 +13,10 @@
                 <mat-icon class="mat-18">arrow_forward</mat-icon>
             </button>
         </div>
-        <div class="header-actions">
+        <span class="header-actions">
             <button mat-flat-button color="" (click)="currentDate()">Today</button>
-            <button mat-flat-button color="accent" routerLink="create">Create</button>
-        </div>
+            <button mat-flat-button color="accent" routerLink="/appointments/create">Create</button>
+        </span>
     </div>
     <div class="body">
         <div class="weekdays">
@@ -25,11 +25,11 @@
             </div>
         </div>
         <div class="days" cdkDropListGroup>
-            <div [ngClass]="date.day == today.getDate() ? 'today day' : 'day'" *ngFor="let date of dates" cdkDropList (cdkDropListDropped)="onDrop($event)" [attr.date]="date | json">
+            <div [ngClass]="isToday(date) ? 'today day' : 'day'" *ngFor="let date of dates;trackBy : trackByDay" cdkDropList (cdkDropListDropped)="onDrop($event)" [attr.date]="date | json">
                 <span class="date">{{ date.day }}</span>
                 <div class="appointments" *ngIf="date.appointments.length">
                     <div class="overview" [matTooltip]="getToolTip(appointment)"
-                        *ngFor="let appointment of date.appointments" >
+                        *ngFor="let appointment of date.appointments;trackBy:trackById" >
                         <div class="draggable" cdkDrag [attr.date]="date.day" [attr.appointment-id]="appointment.id">
                             <div class="details">
                                 {{appointment.time}} : {{appointment.title}}
