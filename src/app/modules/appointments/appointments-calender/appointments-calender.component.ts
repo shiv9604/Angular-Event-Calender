@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectAppointments } from '../store/appointments.selector';
 import { Appointment } from 'src/app/models/appointment.interfaces';
-import { deleteAppointment } from '../store/appointments.action';
+import { deleteAppointment, updateAppointment } from '../store/appointments.action';
 import { Router } from '@angular/router';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmTimechangeComponent } from '../confirm-timechange/confirm-timechange.component';
 
 @Component({
   selector: 'app-appointments-calender',
@@ -21,7 +23,7 @@ export class AppointmentsCalenderComponent implements OnInit {
   daysList: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   monthsList: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-  constructor(private store: Store, private router:Router) { 
+  constructor(private store: Store, private router:Router, private dialog:MatDialog) { 
     const now = new Date();
     this.currentYear = now.getFullYear();
     this.currentMonth = now.getMonth();
@@ -109,8 +111,29 @@ export class AppointmentsCalenderComponent implements OnInit {
   deleteAppointment(appointment:Appointment) {
     this.store.dispatch(deleteAppointment({ id: appointment.id }));
   }
-  onDrop(event : CdkDragDrop<Appointment[]>){
-    console.log(event);
+  onDrop(event: CdkDragDrop<Appointment[]>) {
+    const currentContainerDate = JSON.parse((event.container.element.nativeElement as HTMLElement).getAttribute('date') ?? '');
+    const appointmentId = parseInt((event.item.element.nativeElement as HTMLElement).getAttribute('appointment-id') ?? '') ;
+    if (!appointmentId) return;
+    let data: Appointment | undefined = this.appointments.find((item) => item.id === appointmentId);
+    if (data) {
+      const previousDate:string = data?.date.split('/')[1] ?? '';
+      const currentDate:string = currentContainerDate.day.toString();
+      const resultDate = data.date.replace(previousDate, currentDate);  
+      const dateUpdated = {...data,date:resultDate};
+      this.confirmTimeChange(dateUpdated);
+    }
+  }
+
+  confirmTimeChange(appointment:Appointment) {
+    const dialogRef = this.dialog.open(ConfirmTimechangeComponent, {
+      width: '300px',
+      data: appointment
+    })
+
+    dialogRef.afterClosed().subscribe((data: Appointment) => { 
+      this.store.dispatch(updateAppointment({data}))
+    })
   }
 
 }

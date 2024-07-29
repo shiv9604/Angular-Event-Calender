@@ -20,14 +20,13 @@
                 {{dayName}}
             </div>
         </div>
-        <div class="days">
-            <div class="day" *ngFor="let date of dates">
-
+        <div class="days" cdkDropListGroup>
+            <div class="day" *ngFor="let date of dates" cdkDropList (cdkDropListDropped)="onDrop($event)" [attr.date]="date | json">
                 <span class="date">{{ date.day }}</span>
                 <div class="appointments" *ngIf="date.appointments.length">
                     <div class="overview" [matTooltip]="getToolTip(appointment)"
                         *ngFor="let appointment of date.appointments" >
-                        <div class="draggable" cdkDrag>
+                        <div class="draggable" cdkDrag [attr.date]="date.day" [attr.appointment-id]="appointment.id">
                             <div class="details">
                                 {{appointment.time}} : {{appointment.title}}
                             </div>
@@ -39,7 +38,7 @@
                                     <mat-icon class="mat-18" color="accent">delete</mat-icon>
                                 </button>
                             </div>
-                        <!-- </div> -->
+                        </div>
                     </div>
                 </div>
 

@@ -14,6 +14,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 const MatModules = [
@@ -30,7 +31,8 @@ const MatModules = [
   MatSnackBarModule,
   MatNativeDateModule,
   MatRippleModule,
-  MatTooltipModule
+  MatTooltipModule,
+  DragDropModule
 ];
 @NgModule({
   declarations: [],
