@@ -1,0 +1,49 @@
+<div class="main">
+    <div class="header">
+        <div class="prev">
+            <button mat-icon-button (click)="prev()">
+                <mat-icon class="mat-18">arrow_back</mat-icon>
+            </button>
+        </div>
+        <div class="current-month">
+            {{monthsList[currentMonth]}} {{currentYear }}
+        </div>
+        <div class="next" (click)="next()">
+            <button mat-icon-button>
+                <mat-icon class="mat-18">arrow_forward</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="body">
+        <div class="weekdays">
+            <div class="weekDay" *ngFor="let dayName of daysList">
+                {{dayName}}
+            </div>
+        </div>
+        <div class="days">
+            <div class="day" *ngFor="let date of dates">
+
+                <span class="date">{{ date.day }}</span>
+                <div class="appointments" *ngIf="date.appointments.length">
+                    <div class="overview" [matTooltip]="getToolTip(appointment)"
+                        *ngFor="let appointment of date.appointments" >
+                        <div class="draggable" cdkDrag>
+                            <div class="details">
+                                {{appointment.time}} : {{appointment.title}}
+                            </div>
+                            <div class="actions">
+                                <button mat-button (click)="updateAppointment(appointment)">
+                                    <mat-icon color="secondary">edit</mat-icon>
+                                </button>
+                                <button mat-button (click)="deleteAppointment(appointment)">
+                                    <mat-icon class="mat-18" color="accent">delete</mat-icon>
+                                </button>
+                            </div>
+                        <!-- </div> -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

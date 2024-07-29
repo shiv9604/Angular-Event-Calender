@@ -1,0 +1,21 @@
+.header{
+    text-align: center;
+}
+
+.appointment-form{
+    text-align: center;
+}
+.actions button{
+    width: 45%;
+}
+
+.time{
+    margin-top: 15px;
+    font-size: 20px;
+}
+
+.actions{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

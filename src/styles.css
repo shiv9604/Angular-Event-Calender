@@ -1,1 +1,108 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: rgba(204, 204, 204, 0.411); }
+
+
+.main{
+    width: 70%;
+    margin : 0 auto;
+    padding: 30px;
+    /* border: 1px solid red; */
+    height: calc(100% - 62px);
+}
+.header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.753);
+    height: 10%;
+    width: 100%;
+    font-size: 26px;
+}
+
+.body{
+    padding: 30px;
+    height: calc((100% - 10%) - 30px);
+    background-color: white;
+}
+
+button .mat-icon{
+    cursor: pointer !important;
+}
+/* 
+.text-center{
+    text-align: center;
+}
+
+.d-flex{
+    display: flex;
+}
+
+.flex-row{
+    flex-direction: row;
+}
+
+
+.flex-column{
+    flex-direction: column;
+}
+
+.flex-justify-between{
+    justify-content: space-between;
+}
+
+.flex-align-center{
+    align-items: center;
+}
+
+
+.w-25{
+    width: 25%;
+}
+
+.w-50{
+    width: 50%;
+}
+
+.w-75{
+    width: 75%;
+}
+.w-100{
+    width: 100%;
+}
+
+.h-5{
+    height: 5%;
+}
+
+.h-10{
+    height: 10%;
+}
+
+.h-15{
+    height: 15%;
+}
+.h-20{
+    height: 20%;
+}
+.bg-dark{
+    background-color: rgba(0, 0, 0, 0.753);
+}
+
+.text-white{
+    color : white;
+}
+
+.m-auto{
+    margin: auto;
+}
+
+
+.fs-30{
+    font-size: 30px;
+} */
+mat-form-field{
+    width: 100%;
+}
