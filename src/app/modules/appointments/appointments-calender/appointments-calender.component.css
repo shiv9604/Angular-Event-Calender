@@ -1,9 +1,26 @@
 
 
 .header > *{
-    width: 50%;
+    width: 25%;
     text-align: center;
 }
+
+.header-actions{
+    width: 100%;
+    position: absolute;
+    right: 3%;
+    display: flex;
+    justify-content: right;
+    gap: 30px;
+}
+.header-actions button{
+    cursor: pointer !important;
+}
+
+.today{
+    background-color: rgba(2, 176, 219, 0.705);
+}
+
 .weekdays{
     border-bottom: 1px solid gray;
     display: grid;

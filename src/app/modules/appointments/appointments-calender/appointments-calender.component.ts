@@ -14,7 +14,7 @@ import { ConfirmTimechangeComponent } from '../confirm-timechange/confirm-timech
   styleUrls: ['./appointments-calender.component.css']
 })
 export class AppointmentsCalenderComponent implements OnInit {
-
+  today: Date;
   appointments: Appointment[] = [];
   currentYear: number;
   currentMonth: number;
@@ -24,9 +24,9 @@ export class AppointmentsCalenderComponent implements OnInit {
   monthsList: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   constructor(private store: Store, private router:Router, private dialog:MatDialog) { 
-    const now = new Date();
-    this.currentYear = now.getFullYear();
-    this.currentMonth = now.getMonth();
+    this.today = new Date();
+    this.currentYear = this.today.getFullYear();
+    this.currentMonth = this.today.getMonth();
   }
 
   
@@ -134,6 +134,12 @@ export class AppointmentsCalenderComponent implements OnInit {
     dialogRef.afterClosed().subscribe((data: Appointment) => { 
       this.store.dispatch(updateAppointment({data}))
     })
+  }
+
+  currentDate() {
+    this.currentMonth = this.today.getMonth();
+    this.currentYear = this.today.getFullYear();
+    this.initCalender();
   }
 
 }

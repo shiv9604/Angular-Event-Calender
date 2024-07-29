@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { selectAppointmentById, selectAppointments } from '../store/appointments.selector';
 import { bookAppointment, updateAppointment } from '../store/appointments.action';
 import { Appointment } from 'src/app/models/appointment.interfaces';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs';
 
 @Component({
@@ -22,9 +22,9 @@ export class AppointmentFormComponent implements OnInit {
     date: new FormControl('', [Validators.required]),
     time : new FormControl('', [Validators.required])
   }) ;
-  appointments: Appointment[] = [];
-  lastInserted: Appointment = {} as Appointment;
-  toUpdate: Appointment = {} as Appointment;
+  appointments!: Appointment[];
+  lastInserted!: Appointment;
+  toUpdate!: Appointment;
 
   constructor(private store:Store,private router:Router, private route:ActivatedRoute) { }
 
