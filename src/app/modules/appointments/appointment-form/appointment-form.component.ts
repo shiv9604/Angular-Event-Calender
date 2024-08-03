@@ -9,6 +9,7 @@ import { Subscription, first } from 'rxjs';
 import { Location } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { CustomValidators } from 'src/app/shared/validators/custom-validator';
 
 @Component({
   selector: 'app-appointment-form',
@@ -24,7 +25,7 @@ export class AppointmentFormComponent implements OnInit {
     desc: new FormControl('', [Validators.required, Validators.maxLength(255)]),
     date: new FormControl('', [Validators.required]),
     startTime : new FormControl('', [Validators.required]),
-    endTime : new FormControl('', [Validators.required])
+    endTime: new FormControl('', [Validators.required,CustomValidators.endTimeValidator])
   }) ;
   appointments!: Appointment[];
   lastInserted!: Appointment;

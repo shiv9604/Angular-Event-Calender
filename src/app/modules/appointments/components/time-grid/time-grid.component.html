@@ -51,22 +51,34 @@
                 *ngFor="
                   let appointment of getAppointmentsForTimeSlot(day.date, i)
                 "
-                [ngClass]="{ selected: isSelected(appointment) }"
+                [ngClass]="{ selected: isSelected(appointment),clickable : !isDragging, moveable : isDragging}"
                 (click)="selectAppointment(appointment)"
                 [ngStyle]="getAppointmentStyle(appointment)"
                 [attr.appointment-id]="appointment.id"
                 (mouseenter)="setMinSlot(slot)"
                 (cdkDragStarted)="onDragStarted($event)"
+                (cdkDragMoved)="onDragMoved($event)"
                 (cdkDragEnded)="onDragEnded($event)"
                 cdkDrag
-                #appointment
+                #appointmentRef
               >
                 {{ appointment.title }}
                 <br />
-                <small>
+                <small class="appointment-time"> 
                   {{ appointment.startTime | timeConversion }} -
                   {{ appointment.endTime | timeConversion }}
                 </small>
+
+                <ng-template cdkDragPreview>
+                  <div class="appointment" [style.height]="getHeight(appointmentRef)">
+                    {{ draggingAppointment.title }}
+                    <br />
+                    <small class="appointment-time"> 
+                      {{ draggingAppointment.startTime | timeConversion }} -
+                      {{ draggingAppointment.endTime | timeConversion }}
+                    </small>
+                  </div>
+                </ng-template>
               </div>
             </div>
           </span>

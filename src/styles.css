@@ -73,6 +73,13 @@ button > *{
     color: gray;
 }
 
+.clickable{
+    cursor: pointer !important;
+}
+
+.moveable{
+    cursor: move !important;
+}
 /* 
 .text-center{
     text-align: center;

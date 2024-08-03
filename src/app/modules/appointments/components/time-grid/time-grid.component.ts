@@ -31,9 +31,6 @@ import { updateAppointment } from '../../store/appointments.action';
 })
 export class TimeGridComponent implements OnInit, OnChanges {
 
-  @ViewChild('appointmentParent') appointmentParentRef!: ElementRef;
-  @ViewChild('appointment') appointmentRef!: ElementRef;
-  
   @Input() selectedDate: Date = new Date();
 
   @Output() onSelect: EventEmitter<Appointment> = new EventEmitter();
@@ -49,7 +46,12 @@ export class TimeGridComponent implements OnInit, OnChanges {
   minuteSlots = [15, 30, 45, 60];
   minSlot: number = 0 ;
   overLapresults: boolean[] = [];
-  
+  isDragging: boolean = false;
+  draggingAppointment: Appointment = {
+    startTime: '',
+    endTime : ''
+  } as Appointment;
+
   constructor(private store: Store) { }
 
   
@@ -150,13 +152,13 @@ export class TimeGridComponent implements OnInit, OnChanges {
     };
   }
 
-  onDrop(event: CdkDragDrop<Appointment[]>): void {
+  getDraggingAppointmentData(element:HTMLElement): Appointment {
+    let updatedAppointment = {} as Appointment;
     const appointmentId = parseInt(
-      (event.item.element.nativeElement as HTMLElement).getAttribute(
+      element.getAttribute(
         'appointment-id'
       ) ?? ''
     );
-    if (!appointmentId) return;
     const appointment: Appointment =
       this.appointments.find((item) => item.id === appointmentId) ??
       ({} as Appointment);
@@ -181,14 +183,20 @@ export class TimeGridComponent implements OnInit, OnChanges {
           appointment.duration as any
         ),
       };
-      const updatedAppointment = {
+      updatedAppointment = {
         ...appointment,
         date: newDate.toLocaleDateString(),
         startTime: newTime.startTime,
         endTime: newTime.endTime,
       };
-      this.store.dispatch(updateAppointment({ data: updatedAppointment }));
+      return updatedAppointment
     }
+    return updatedAppointment
+  }
+    
+  onDrop(event: CdkDragDrop<Appointment[]>): void {
+    const updatedAppointment = this.getDraggingAppointmentData(event.item.element.nativeElement);
+    if(updatedAppointment) this.store.dispatch(updateAppointment({ data: updatedAppointment }));
   }
 
   replaceDate(oldDate: Date, newDate: Date): Date {
@@ -210,17 +218,25 @@ export class TimeGridComponent implements OnInit, OnChanges {
   }
 
   onDragStarted(event: CdkDragStart) {
-    const parentWidth = (this.appointmentParentRef.nativeElement as HTMLElement).offsetWidth.toString() + 'px';
-    (this.appointmentRef.nativeElement as HTMLElement).style.width = parentWidth; 
+    this.isDragging = true;
   }
 
   onDragEnded(event: CdkDragEnd) {
-    const parentWidth = (this.appointmentParentRef.nativeElement as HTMLElement).offsetWidth.toString() + 'px';
-    (this.appointmentRef.nativeElement as HTMLElement).style.width = parentWidth; 
+    this.isDragging = false;
+  }
+
+  onDragMoved(event: CdkDragMove) {
+    this.draggingAppointment = this.getDraggingAppointmentData(event.source.element.nativeElement) ?? {} as Appointment;
+  }
+
+  getHeight(element: HTMLElement): string {
+    const regex = /height:\s*([\d.]+%)/;
+    const match = element.outerHTML.match(regex);
+    return match ? match[1] : '';
   }
 
   
-  setDraggableDropDate(date:Date) {
+  setDraggableDropDate(date: Date) {
     this.lastDroppedDate = date;
   }
 
