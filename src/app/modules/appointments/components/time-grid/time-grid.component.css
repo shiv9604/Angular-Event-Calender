@@ -116,7 +116,7 @@
 .min-slot{
   height: calc(100% / 4);
   border-bottom: 1px solid gainsboro;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 .default-col{

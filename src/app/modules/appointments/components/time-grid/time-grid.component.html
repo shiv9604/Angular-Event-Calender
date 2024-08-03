@@ -44,6 +44,7 @@
             <div
               class="min-slot"
               *ngFor="let slot of minuteSlots"
+              (click)="onCreate(slot,hour)"
               #appointmentParent
             >
               <div

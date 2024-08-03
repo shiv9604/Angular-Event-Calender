@@ -36,6 +36,7 @@ export class AppointmentFormComponent implements OnInit {
   ngOnInit(): void {
     this.getAppointments();
     this.checkIfUpdate();
+    this.checkForExistingValues();
   }
 
   getAppointments() {
@@ -100,6 +101,13 @@ export class AppointmentFormComponent implements OnInit {
     const endTotalMinutes = endHour * 60 + endMinute;
     const durationMinutes = endTotalMinutes - startTotalMinutes;
     return durationMinutes;
+  }
+
+  checkForExistingValues() {
+    this.appointmentForm.patchValue({
+      date: this.data.selectedDate,
+      startTime : this.data.startTime
+    })
   }
 
   onCancel() {

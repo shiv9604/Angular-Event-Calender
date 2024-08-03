@@ -59,6 +59,14 @@ export class AppointmentsCalenderNewComponent implements OnInit {
     })
   }
 
+  createFromGrid(data:{minSlot:number,hourIn24:string}) {
+    const startTime = `${data.hourIn24.split(':')[0]}:${data.minSlot}`;
+    const dialogRef = this.dialog.open(AppointmentFormComponent, {
+      minWidth: '35%',
+      data : {selectedDate : this.selectedDate,startTime}
+    })
+  }
+
   edit(appointment:Appointment) {
     const dialogRef = this.dialog.open(AppointmentFormComponent, {
       minWidth: '35%',

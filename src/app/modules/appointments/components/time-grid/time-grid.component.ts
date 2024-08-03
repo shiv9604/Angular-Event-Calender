@@ -34,7 +34,7 @@ export class TimeGridComponent implements OnInit, OnChanges {
   @Input() selectedDate: Date = new Date();
 
   @Output() onSelect: EventEmitter<Appointment> = new EventEmitter();
-  
+  @Output() createFromGrid : EventEmitter<{minSlot:number,hourIn24:string}> = new EventEmitter();
   hours: string[] = Array.from({ length: 24 }, (_, i) => this.formatTime(i));
   weekdays: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   days: { name: string, date: Date }[] = [];
@@ -246,6 +246,11 @@ export class TimeGridComponent implements OnInit, OnChanges {
 
   setMinSlot(slot:number) {
     this.minSlot = slot;  
+  }
+
+  onCreate(minSlot: number, hourIn12: string) {
+    const hourIn24 = this.convertTo24Hour(hourIn12);
+    this.createFromGrid.emit({minSlot, hourIn24})
   }
   
   isActive(date: Date) {
