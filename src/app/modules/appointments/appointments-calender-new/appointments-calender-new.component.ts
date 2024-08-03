@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AppointmentService } from 'src/app/shared/services/appointment/appointment.service';
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
@@ -6,6 +6,7 @@ import { Appointment } from 'src/app/models/appointment.interfaces';
 import { ViewAppointmentComponent } from '../components/view-appointment/view-appointment.component';
 import { Store } from '@ngrx/store';
 import { deleteAppointment } from '../store/appointments.action';
+import { MatCalendar } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-appointments-calender-new',
@@ -13,6 +14,8 @@ import { deleteAppointment } from '../store/appointments.action';
   styleUrls: ['./appointments-calender-new.component.css']
 })
 export class AppointmentsCalenderNewComponent implements OnInit {
+
+  @ViewChild(MatCalendar, {static: false}) calendar!: MatCalendar<Date>;
 
   selectedDate: Date = new Date();
 
@@ -28,6 +31,7 @@ export class AppointmentsCalenderNewComponent implements OnInit {
 
   today() {
     this.selectedDate = new Date();
+    this.calendar._goToDateInView(this.selectedDate,'month');
   }
 
   view(appointment:Appointment) {

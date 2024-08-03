@@ -77,13 +77,15 @@
   position: absolute;
   background-color: #3f51b5;
   color : white;
-  padding: 5px;
+  padding: 10px 15px;
   border-radius: 4px;
   cursor: pointer !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index:2;
   pointer-events: all;
-
+  min-width: min-content;
+  display: grid;
+  place-content: center;
 }
 
 .dynamic-col {
@@ -111,4 +113,8 @@
   height: calc(100% / 4);
   border-bottom: 1px solid gainsboro;
   pointer-events: none;
+}
+
+.default-col{
+  border-left: none !important;
 }

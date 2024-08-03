@@ -1,70 +1,75 @@
-.calender{
-    width: 20%;
-    height: 100%;
-    background-color: white;
-}
-.create button{
-    width: 100%;
-    margin: 20px 0 0 0;
-    padding: 5px;
-    font-size: 15px;
+.calender {
+  width: 20%;
+  height: 100%;
+  background-color: white;
 }
 
-.timegrid{
-    width: 80%;
-    height: 100%;
-    margin: 0 0 0 20px;
-    /* background-color: beige; */
+.create button {
+  width: 100%;
+  margin: 20px 0 0 0;
+  padding: 5px;
+  font-size: 15px;
 }
 
-.body{
-    display: flex;
+.timegrid {
+  width: 80%;
+  height: 100%;
+  margin: 0 0 0 20px;
+  /* background-color: beige; */
+}
+
+.body {
+  display: flex;
 }
 
 /* Time grid */
 .calendar-container {
-    display: flex;
-  }
-  
-  .time-grid {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .hour {
-    display: flex;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .time {
-    width: 50px;
-    text-align: center;
-    border-right: 1px solid #ccc;
-  }
-  
-  .time-slot {
-    flex: 1;
-    border-right: 1px solid #ccc;
-    min-height: 30px;
-    position: relative;
-  }
-  
-  .event {
-    position: absolute;
-    background: #1976d2;
-    color: white;
-    padding: 5px;
-    border-radius: 4px;
-  }
-  
-  form {
-    flex: 0 0 200px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 20px;
-  }
-  
-  mat-form-field {
-    margin-bottom: 10px;
-  }
+  display: flex;
+}
+
+.time-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hour {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+.time {
+  width: 50px;
+  text-align: center;
+  border-right: 1px solid #ccc;
+}
+
+.time-slot {
+  flex: 1;
+  border-right: 1px solid #ccc;
+  min-height: 30px;
+  position: relative;
+}
+
+.event {
+  position: absolute;
+  background: #1976d2;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+form {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+mat-form-field {
+  margin-bottom: 10px;
+}
+
+.header h1 {
+  margin: 0 0 0 0;
+}

@@ -1,5 +1,19 @@
-import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  CdkDragDrop,
+  CdkDragMove,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -26,9 +40,13 @@ export class TimeGridComponent implements OnInit, OnChanges {
   appointments: Appointment[] = [];
   selectedAppointment!: Appointment;
   lastDroppedDate!: Date;
+  lastDroppedHours!: string;
   minuteSlots = [15, 30, 45, 60];
   minSlot: number = 0 ;
-  constructor(private store:Store) { }
+  overLapresults: boolean[] = [];
+  
+  constructor(private store: Store) { }
+
   
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedDate']) this.updateHeaderDates();
@@ -57,7 +75,7 @@ export class TimeGridComponent implements OnInit, OnChanges {
     // Extract the time and period (AM/PM)
     const [time, period] = time12.split(' ');
     const [hours, minutes] = time.split(':').map(Number);
-  
+
     // Convert to 24-hour format
     let hours24 = hours;
     if (period === 'PM' && hours !== 12) {
@@ -128,48 +146,70 @@ export class TimeGridComponent implements OnInit, OnChanges {
   }
 
   onDrop(event: CdkDragDrop<Appointment[]>): void {
-    const renderedHour = (event.container.element.nativeElement as HTMLElement).getAttribute('rendered-hour') ?? ''
-    const [hourValue, minuteValue] = this.convertTo24Hour(renderedHour).split(':');
-    const parsedHour = parseFloat(hourValue);
-    const parsedMinute = parseFloat(hourValue);
-    const currentContainerDate = new Date(this.lastDroppedDate);
-    currentContainerDate.setHours(parsedHour, parsedMinute, 0, 0); // Set to the exact hour dropped
-  
-    const appointmentId = parseInt((event.item.element.nativeElement as HTMLElement).getAttribute('appointment-id') ?? '');
+    const appointmentId = parseInt(
+      (event.item.element.nativeElement as HTMLElement).getAttribute(
+        'appointment-id'
+      ) ?? ''
+    );
     if (!appointmentId) return;
-  
-    const appointment = this.appointments.find(item => item.id === appointmentId);
+    const appointment: Appointment =
+      this.appointments.find((item) => item.id === appointmentId) ??
+      ({} as Appointment);
+    const [hourValue] = this.convertTo24Hour(this.lastDroppedHours).split(':');
+    const existingMinutes = parseInt(appointment.startTime.split(':')[1]);
+    const newHours = parseFloat(hourValue);
+    const currentContainerDate = new Date(this.lastDroppedDate);
+    currentContainerDate.setHours(newHours, existingMinutes, 0, 0);
+
     if (appointment) {
-      const newDate = this.replaceDate(new Date(appointment.date), currentContainerDate);
-      const newTime = this.calculateNewTime(event, parsedHour, appointment.startTime.split(':')[1]);
-      const updatedAppointment = { ...appointment, date: newDate.toLocaleDateString(), startTime: newTime.startTime, endTime: newTime.endTime };
+      const newDate = this.replaceDate(
+        new Date(appointment.date),
+        currentContainerDate
+      );
+
+      const newStartTime = `${newHours}:${existingMinutes}`;
+
+      const newTime = {
+        startTime: this.convertTo24Hour(newStartTime),
+        endTime: this.calculateNewEndTime(
+          newStartTime,
+          appointment.duration as any
+        ),
+      };
+      const updatedAppointment = {
+        ...appointment,
+        date: newDate.toLocaleDateString(),
+        startTime: newTime.startTime,
+        endTime: newTime.endTime,
+      };
       this.store.dispatch(updateAppointment({ data: updatedAppointment }));
     }
   }
-  
+
   replaceDate(oldDate: Date, newDate: Date): Date {
     const updatedDate = new Date(oldDate);
     updatedDate.setFullYear(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
     return updatedDate;
   }
-  
 
-
-  calculateNewTime(event: CdkDragDrop<Appointment[]>, hours: number, minutes:string): { startTime: string, endTime: string } {
-    const [startHour, startMinute] = [hours,minutes];
-    const endHour = startHour + 1;
-    const newStartTime = `${startHour.toString().padStart(2, '0')}:${startMinute}`;
-    const newEndTime = `${endHour.toString().padStart(2, '0')}:${startMinute}`;
-
-    
-    return {
-      startTime: newStartTime,
-      endTime: newEndTime
-    };
+  calculateNewEndTime(startTime: string, durationMinutes: number): string {
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const startTotalMinutes = startHour * 60 + startMinute;
+    const endTotalMinutes = startTotalMinutes + durationMinutes;
+    const endHour = Math.floor(endTotalMinutes / 60) % 24;
+    const endMinute = endTotalMinutes % 60;
+    const newEndTime = `${endHour.toString().padStart(2, '0')}:${endMinute
+      .toString()
+      .padStart(2, '0')}`;
+    return newEndTime;
   }
 
   setDraggableDropDate(date:Date) {
     this.lastDroppedDate = date;
+  }
+
+  setDraggableHours(h12: string) {
+    this.lastDroppedHours = h12;
   }
 
   setMinSlot(slot:number) {
@@ -187,5 +227,4 @@ export class TimeGridComponent implements OnInit, OnChanges {
   }
 
   ngOnDestroy() {
-  }
-}
+  }}
