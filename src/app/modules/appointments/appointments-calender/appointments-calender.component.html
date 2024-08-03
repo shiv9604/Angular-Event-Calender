@@ -32,7 +32,7 @@
                         *ngFor="let appointment of date.appointments;trackBy:trackById" >
                         <div class="draggable" cdkDrag [attr.date]="date.day" [attr.appointment-id]="appointment.id">
                             <div class="details">
-                                {{appointment.time}} : {{appointment.title}}
+                            {{appointment.startTime}} - {{appointment.endTime}} : {{appointment.title}}
                             </div>
                             <div class="actions">
                                 <button mat-button (click)="updateAppointment(appointment)">

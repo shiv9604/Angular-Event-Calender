@@ -3,6 +3,9 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: rgba(204, 204, 204, 0.411); }
 
+/* p,h1,h2,h3,h4,h5,h6{
+    margin: 0px !important;
+} */
 
 .main{
     width: 70%;
@@ -21,12 +24,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-
     width: 100%;
     font-size: 26px;
     position: relative;
-
 }
 
 .body{
-    padding: 30px;
-    height: calc((100% - 10%) - 30px);
+    padding: 20px;
+    /* height: calc((100% - 10%) - 30px); */
+    height: calc(100% - 40px);
     background-color: white;
     position: relative;
 }
@@ -39,6 +42,31 @@ button > *{
     cursor: pointer !important;
 }
 
+.border-danger{
+    border: 1px solid red;
+}
+
+.border-primary{
+    border: 1px solid blue;
+}
+.modal-header{
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.icon-details{
+    display: flex;
+    gap: 2;
+    align-items: top;
+    padding: 0 20px;
+}
+
+.icon-details mat-icon{
+    margin: 0px 15px 0 0;
+    color: gray;
+}
 
 /* 
 .text-center{

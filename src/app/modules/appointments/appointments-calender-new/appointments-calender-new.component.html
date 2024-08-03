@@ -1,0 +1,21 @@
+<!-- <div class="header">
+    Appointments
+</div> -->
+<div class="body">
+    <div class="calender border-danger">
+        <mat-card>
+            <mat-calendar [selected]="selectedDate" (selectedChange)="onSelect($event)"></mat-calendar>    
+        </mat-card>
+        <div class="create">
+            <button mat-raised-button color="primary" (click)="create()">
+                Create Appointment
+            </button>
+            <button mat-raised-button color="accent" (click)="today()">
+            Today
+            </button>
+        </div>
+    </div>
+    <div class="timegrid border-danger">
+        <app-time-grid [selectedDate]="selectedDate" (onSelect)="view($event)"></app-time-grid>
+    </div>    
+</div>

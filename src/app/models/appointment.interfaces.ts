@@ -1,11 +1,11 @@
 export interface Appointment{
     id : number,
-    userName: string,
-    email: string,
     date: string,
     title : string,
     desc: string,
-    time : string
+    startTime: string,
+    endTime: string,
+    duration ?: number
 }
 
 export interface AppointmentDate{

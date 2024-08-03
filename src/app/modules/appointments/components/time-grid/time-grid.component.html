@@ -1,0 +1,67 @@
+<div class="weekday-row">
+  <div class="week-day default-col"></div>
+
+  <div class="week-day" *ngFor="let day of days" [ngClass]="isActive(day.date) ? 'active'  : ''">
+    <p class="name">
+      <small>{{day.name }}</small>
+    </p>
+    <div class="date">
+      <p>{{day.date | date:'d'}}</p>
+    </div>
+
+  </div>
+</div>
+<div class="hours-row">
+  <div class="default-col day">
+    <span class="hours-label" *ngFor="let item of hours">
+      <span class="value">
+        {{item}}
+      </span>
+    </span>
+  </div>
+
+  <!-- My Hourly Implementation -->
+  <div class="dynamic-col day" *ngFor="let day of days">
+    <div class="hours" cdkDropListGroup (mouseenter)="setDraggableDropDate(day.date)">
+      <span class="hours-label" *ngFor="let item of hours;index as i" cdkDropList (cdkDropListDropped)="onDrop($event)"
+        [attr.rendered-hour]="item">
+        <span class="empty-container">
+          <div class="min-slot" *ngFor="let slot of minuteSlots">
+            <div class="appointment" *ngFor="let appointment of getAppointmentsForTimeSlot(day.date, i)"
+            [ngClass]="{ 'selected': isSelected(appointment) }" (click)="selectAppointment(appointment)"
+            [ngStyle]="getAppointmentStyle(appointment)" cdkDrag [cdkDragData]="appointment"
+            [attr.appointment-id]="appointment.id" (mouseenter)="setMinSlot(slot)">
+            {{appointment.title}}
+            <br>
+            <small>
+              {{appointment.startTime | timeConversion}} - {{appointment.endTime | timeConversion}}
+            </small>
+          </div>
+          </div>
+        </span>
+      </span>
+    </div>
+  </div>
+  <!-- <div class="dynamic-col day" cdkDropListGroup *ngFor="let day of days;index as i">
+    <div class="hours">
+      <span class="hours-label" *ngFor="let item of hours;" 
+            cdkDropList 
+            (cdkDropListDropped)="onDrop($event)"
+            [attr.rendered-hour]="i" 
+            [attr.rendered-date-for-hour]="days[i].date">
+        <span class="empty-container">
+          <div class="appointment"
+               *ngFor="let appointment of getAppointmentsForTimeSlot(day.date, i)"
+               [ngClass]="{ 'selected': isSelected(appointment) }"
+               (click)="selectAppointment(appointment)"
+               [ngStyle]="getAppointmentStyle(appointment)"
+               cdkDrag 
+               [cdkDragData]="appointment"
+               [attr.appointment-id]="appointment.id">
+            {{appointment.title}}
+          </div>
+        </span>
+      </span>
+    </div>
+  </div> -->
+</div>

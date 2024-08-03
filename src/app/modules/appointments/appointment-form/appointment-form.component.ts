@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectAppointmentById, selectAppointments } from '../store/appointments.selector';
@@ -7,6 +7,8 @@ import { Appointment } from 'src/app/models/appointment.interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, first } from 'rxjs';
 import { Location } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-appointment-form',
@@ -18,18 +20,17 @@ import { Location } from '@angular/common';
 export class AppointmentFormComponent implements OnInit {
   today: Date = new Date();
   appointmentForm: FormGroup =  new FormGroup({
-    userName: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required, Validators.email]),
     title : new FormControl('', [Validators.required]),
     desc: new FormControl('', [Validators.required, Validators.maxLength(255)]),
     date: new FormControl('', [Validators.required]),
-    time : new FormControl('', [Validators.required])
+    startTime : new FormControl('', [Validators.required]),
+    endTime : new FormControl('', [Validators.required])
   }) ;
   appointments!: Appointment[];
   lastInserted!: Appointment;
   toUpdate!: Appointment;
   subsriptions: Subscription[] = [];
-  constructor(private store:Store,private router:Router, private route:ActivatedRoute, private cdr:ChangeDetectorRef, private location:Location) { }
+  constructor(private store:Store, private cdr:ChangeDetectorRef, private snackBar:SnackbarService,private dialogRef:MatDialogRef<AppointmentFormComponent>,@Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
     this.getAppointments();
@@ -48,18 +49,18 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   checkIfUpdate() {
-    let id = this.route.snapshot.params['id'];
+    if (!this.data && this.data.id) return;
+    const id = this.data.id;
     // Unsubscribing observable after getting first value.
     this.store.select(selectAppointmentById, { id }).pipe(first()).subscribe((res) => {
       if (!res) return;
       this.toUpdate = res as Appointment;
       this.appointmentForm.patchValue({
-        userName: this.toUpdate.userName,
-        email: this.toUpdate.email,
         title : this.toUpdate.title,
         desc: this.toUpdate.desc,
         date: new Date(this.toUpdate.date),
-        time : this.toUpdate.time
+        startTime: this.toUpdate.startTime,
+        endTime : this.toUpdate.endTime,
       })
       this.cdr.markForCheck();
     })
@@ -75,7 +76,8 @@ export class AppointmentFormComponent implements OnInit {
     appointment.date = new Date(appointment.date).toLocaleDateString();
     appointment.id = this.lastInserted.id + 1;
     this.store.dispatch(bookAppointment({ data: appointment }));
-    this.router.navigate(['appointments']);
+    this.snackBar.open('Appointment Created Successfully!');
+    this.onClose();
   }
 
   onUpdate() {
@@ -83,21 +85,22 @@ export class AppointmentFormComponent implements OnInit {
     updated.date = new Date(updated.date).toLocaleDateString();
     updated.id = this.toUpdate.id;
     this.store.dispatch(updateAppointment({ data: updated }));
-    this.router.navigate(['appointments']);
+    this.snackBar.open('Appointment Updated Successfully!');
+    this.onClose();
   }
 
   onCancel() {
     this.appointmentForm.reset();
   }
 
+  onClose() {
+    this.dialogRef.close();
+  }
 
   getControl(name:string): AbstractControl | null{
     return this.appointmentForm.get(name);
   }
 
-  back() {
-    this.location.back();
-  }
 
   get isValid(): boolean {
     return this.appointmentForm.valid

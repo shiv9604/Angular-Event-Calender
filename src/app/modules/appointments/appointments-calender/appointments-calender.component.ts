@@ -143,8 +143,7 @@ export class AppointmentsCalenderComponent implements OnInit {
     const toolTip = `
     Title : ${appointment.title},
     \nDescription : ${appointment.desc},
-    \nTime : ${appointment.time},
-    \nBooked By : ${appointment.userName}
+    \nTime : ${appointment.startTime} - ${appointment.endTime},
     `
     return toolTip
   }
