@@ -1,5 +1,5 @@
 .calender {
-  width: 20%;
+  min-width: 300px;
   height: 100%;
   background-color: white;
 }
@@ -12,14 +12,15 @@
 }
 
 .timegrid {
-  width: 80%;
   height: 100%;
-  margin: 0 0 0 20px;
+  margin: 0 0 0 50px;
+  overflow-x: auto; 
   /* background-color: beige; */
 }
 
 .body {
   display: flex;
+  justify-content: center;
 }
 
 /* Time grid */

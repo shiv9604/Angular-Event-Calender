@@ -1,6 +1,8 @@
 import {
   CdkDragDrop,
+  CdkDragEnd,
   CdkDragMove,
+  CdkDragStart,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import {
@@ -29,6 +31,9 @@ import { updateAppointment } from '../../store/appointments.action';
 })
 export class TimeGridComponent implements OnInit, OnChanges {
 
+  @ViewChild('appointmentParent') appointmentParentRef!: ElementRef;
+  @ViewChild('appointment') appointmentRef!: ElementRef;
+  
   @Input() selectedDate: Date = new Date();
 
   @Output() onSelect: EventEmitter<Appointment> = new EventEmitter();
@@ -204,6 +209,17 @@ export class TimeGridComponent implements OnInit, OnChanges {
     return newEndTime;
   }
 
+  onDragStarted(event: CdkDragStart) {
+    const parentWidth = (this.appointmentParentRef.nativeElement as HTMLElement).offsetWidth.toString() + 'px';
+    (this.appointmentRef.nativeElement as HTMLElement).style.width = parentWidth; 
+  }
+
+  onDragEnded(event: CdkDragEnd) {
+    const parentWidth = (this.appointmentParentRef.nativeElement as HTMLElement).offsetWidth.toString() + 'px';
+    (this.appointmentRef.nativeElement as HTMLElement).style.width = parentWidth; 
+  }
+
+  
   setDraggableDropDate(date:Date) {
     this.lastDroppedDate = date;
   }

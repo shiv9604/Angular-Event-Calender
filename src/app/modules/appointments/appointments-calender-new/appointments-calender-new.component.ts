@@ -70,4 +70,5 @@ export class AppointmentsCalenderNewComponent implements OnInit {
     this.store.dispatch(deleteAppointment({ id: appointment.id }));
   }
 
+
 }

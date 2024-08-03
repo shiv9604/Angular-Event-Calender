@@ -73,6 +73,8 @@ export class AppointmentFormComponent implements OnInit {
     }
     
     const appointment: Appointment = { ...this.appointmentForm.value };
+    const duration = this.calculateDuration(appointment.startTime, appointment.endTime);
+    appointment.duration = duration;
     appointment.date = new Date(appointment.date).toLocaleDateString();
     appointment.id = this.lastInserted.id + 1;
     this.store.dispatch(bookAppointment({ data: appointment }));
@@ -87,6 +89,16 @@ export class AppointmentFormComponent implements OnInit {
     this.store.dispatch(updateAppointment({ data: updated }));
     this.snackBar.open('Appointment Updated Successfully!');
     this.onClose();
+  }
+
+  
+  calculateDuration(startTime: string, endTime: string): number {
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    const startTotalMinutes = startHour * 60 + startMinute;
+    const endTotalMinutes = endHour * 60 + endMinute;
+    const durationMinutes = endTotalMinutes - startTotalMinutes;
+    return durationMinutes;
   }
 
   onCancel() {
