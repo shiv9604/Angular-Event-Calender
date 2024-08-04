@@ -15,15 +15,15 @@ export class ViewAppointmentComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onEdit(): void {
-    this.dialogRef.close({type : 'EDIT', appointment : this.data.appointment})
+  public onEdit(): void {
+    this.dialogRef.close({ type: 'EDIT', appointment: this.data.appointment })
   }
 
-  onDelete(): void {
-    this.dialogRef.close({type : 'DELETE', appointment : this.data.appointment})
+  public onDelete(): void {
+    this.dialogRef.close({ type: 'DELETE', appointment: this.data.appointment })
   }
 
-  onClose(): void {
+  public onClose(): void {
     this.dialogRef.close();
   }
 

@@ -1,14 +1,18 @@
-export interface Appointment{
-    id : number,
+export interface Appointment {
+    id: number,
     date: string,
-    title : string,
+    title: string,
     desc: string,
     startTime: string,
     endTime: string,
-    duration ?: number
+    duration?: number
 }
 
-export interface AppointmentDate{
+export interface AppointmentDate {
     day: number,
     appointments: Appointment[]
+}
+
+export interface DayofWeek {
+    name: string, date: Date
 }

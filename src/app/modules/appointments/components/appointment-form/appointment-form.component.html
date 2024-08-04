@@ -1,0 +1,77 @@
+<div class="modal-header">
+  <h2 class="title" *ngIf="!toUpdate">Create Appointment</h2>
+  <h2 class="title" *ngIf="toUpdate">Update Appointment</h2>
+  <hr />
+  <button mat-icon-button (click)="onClose()">
+    <mat-icon class="mat-18">close</mat-icon>
+  </button>
+</div>
+
+<div class="body">
+  <form class="appointment-form" [formGroup]="appointmentForm">
+    <div class="appointment-title">
+      <mat-form-field>
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+    </div>
+
+    <div class="description">
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="desc"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="date">
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="time">
+      <mat-form-field>
+        <mat-label>Start Time</mat-label>
+        <input matInput type="time" formControlName="startTime" />
+        <mat-hint> <small>24 Hours Format</small></mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="time">
+      <mat-form-field>
+        <mat-label>End Time</mat-label>
+        <input matInput type="time" formControlName="endTime" />
+        <mat-hint> <small>24 Hours Format</small></mat-hint>
+        <mat-error *ngIf="getControl('endTime')?.hasError('invalid')"
+          >End time must be greater than start time</mat-error
+        >
+      </mat-form-field>
+    </div>
+  </form>
+  <br />
+  <div class="actions">
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="!isValid"
+      *ngIf="!toUpdate"
+    >
+      Create Appointment
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      *ngIf="toUpdate"
+      (click)="onUpdate()"
+      [disabled]="!isValid"
+    >
+      Update Appointment
+    </button>
+    <button mat-flat-button color="accent" (click)="onCancel()">Cancel</button>
+  </div>
+</div>

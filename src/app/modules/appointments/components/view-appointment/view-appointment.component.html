@@ -1,37 +1,42 @@
 <div class="header-actions">
-    <button mat-icon-button (click)="onEdit()" color="primary">
-        <mat-icon class="mat-icon-outlined">edit</mat-icon>
-    </button>
-    <button mat-icon-button (click)="onDelete()" color="accent">
-        <mat-icon class="mat-icon-outlined">delete</mat-icon>
-    </button>
-    <button mat-icon-button (click)="onClose()">
-        <mat-icon class="mat-icon-outlined">close</mat-icon>
-    </button>
+  <button mat-icon-button (click)="onEdit()" color="primary">
+    <mat-icon class="mat-icon-outlined">edit</mat-icon>
+  </button>
+  <button mat-icon-button (click)="onDelete()" color="accent">
+    <mat-icon class="mat-icon-outlined">delete</mat-icon>
+  </button>
+  <button mat-icon-button (click)="onClose()">
+    <mat-icon class="mat-icon-outlined">close</mat-icon>
+  </button>
 </div>
-<br>
+<br />
 <div class="modal-header">
-    <span class="event-dot"></span>
-    <div class="details">
-        <h2 class="title">
-            {{data.appointment.title}}
-        </h2>
-    </div>
+  <span class="event-dot"></span>
+  <div class="details">
+    <h2 class="title">
+      {{ data.appointment.title }}
+    </h2>
+  </div>
 </div>
-<br>
+<br />
 
 <div class="icon-details">
-    <mat-icon class="mat-18">event</mat-icon>
-    <div class="details">
-        <p> {{data.appointment.date | date : 'fullDate'}}, {{data.appointment.startTime | timeConversion}} - {{data.appointment.endTime | timeConversion}}</p>
-    </div>
+  <mat-icon class="mat-18">event</mat-icon>
+  <div class="details">
+    <p>
+      {{ data.appointment.date | date : "fullDate" }},
+      {{ data.appointment.startTime | timeConversion }} -
+      {{ data.appointment.endTime | timeConversion }}
+    </p>
+  </div>
 </div>
-<br>
+<br />
 
 <div class="icon-details">
-    <mat-icon class="mat-18">assignment</mat-icon>
+  <mat-icon class="mat-18">assignment</mat-icon>
+  <div class="details">
     <div class="details">
-        <div class="details">
-            <p> {{data.appointment.desc}}</p>
-        </div>
+      <p>{{ data.appointment.desc }}</p>
     </div>
+  </div>
+</div>
