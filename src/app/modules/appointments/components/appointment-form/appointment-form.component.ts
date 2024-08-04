@@ -102,7 +102,6 @@ export class AppointmentFormComponent implements OnInit {
 
   private checkForExistingValues(): void {
     this.appointmentForm.patchValue({
-      date: this.data.selectedDate,
       startTime: this.data.startTime
     })
   }

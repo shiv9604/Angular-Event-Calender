@@ -13,14 +13,6 @@ const routes: Routes = [
     path: 'calender-new',
     component : AppointmentsCalenderNewComponent    
   },
-  {
-    path: 'create',
-    component : AppointmentFormComponent
-  },
-  {
-    path: 'edit/:id',
-    component : AppointmentFormComponent
-  }
 ];
 
 @NgModule({

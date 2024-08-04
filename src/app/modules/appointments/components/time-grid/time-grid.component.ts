@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
 import { Appointment, DayofWeek } from 'src/app/models/appointment.interfaces';
 import { selectAppointments } from '../../store/appointments.selector';
 import { updateAppointment } from '../../store/appointments.action';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-time-grid',
@@ -54,7 +55,7 @@ export class TimeGridComponent implements OnInit, OnChanges {
     endTime: ''
   } as Appointment;
 
-  constructor(private store: Store, private cdRef:ChangeDetectorRef) { }
+  constructor(private store: Store, private cdRef:ChangeDetectorRef,private snackBar: SnackbarService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedDate']) this.updateHeaderDates();
@@ -218,6 +219,8 @@ export class TimeGridComponent implements OnInit, OnChanges {
   public onDrop(event: CdkDragDrop<Appointment[]>): void {
     const updatedAppointment = this.getDraggingAppointmentData(event.item.element.nativeElement);
     if (updatedAppointment) this.store.dispatch(updateAppointment({ data: updatedAppointment }));
+    this.snackBar.open('Appointment Updated Successfully!');
+
   }
 
   public onDragStarted(event: CdkDragStart): void {

@@ -79,7 +79,7 @@
 
 .appointment {
   position: absolute;
-  background-color: #3f51b5;
+  background-color: #5268e5;
   color : white;
   border-radius: 4px;
   /* cursor: pointer !important; */
@@ -102,11 +102,12 @@
 
 .appointment:hover{
   transition: 0.3s;
-  background-color: #5268e5;
+  background-color: #3f51b5;
+
 }
 .appointment:active{
   transition: 0.3s;
-  background-color: #5268e5;
+  background-color: #3f51b5;
 }
 
 .appointment .selected {
@@ -116,7 +117,7 @@
 .min-slot{
   height: calc(100% / 4);
   border-bottom: 1px solid gainsboro;
-  /* pointer-events: none; */
+  pointer-events: none;
 }
 
 .default-col{
