@@ -8,19 +8,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
   OnInit,
-  Output,
-  SimpleChanges,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { Appointment, DayofWeek } from 'src/app/models/appointment.interfaces';
+import { takeWhile } from 'rxjs';
+import { Appointment, DayofWeek, TimeSlot } from 'src/app/models/appointment.interfaces';
 import { selectAppointments } from '../../store/appointments.selector';
 import { updateAppointment } from '../../store/appointments.action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
 
 @Component({
   selector: 'app-time-grid',
@@ -29,20 +25,10 @@ import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.servi
   // Preventing unnecessary chnage detection for Performance Optimisation.
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeGridComponent implements OnInit, OnChanges {
-
-  // Data Bindings
-  @Input() public selectedDate: Date = new Date();
-
-  // Events
-  @Output() public onSelect: EventEmitter<Appointment> = new EventEmitter();
-  @Output() public createFromGrid: EventEmitter<{ minSlot: number, hourIn24: string }> = new EventEmitter();
-
-  // Properties
+export class TimeGridComponent implements OnInit{
   public hours: string[] = Array.from({ length: 24 }, (_, i) => this.formatTime(i));
   public weekdays: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   public days: DayofWeek[] = [];
-  private subscriptions: Subscription[] = [];
   private appointments: Appointment[] = [];
   private selectedAppointment!: Appointment;
   private lastDroppedDate!: Date;
@@ -54,23 +40,21 @@ export class TimeGridComponent implements OnInit, OnChanges {
     startTime: '',
     endTime: ''
   } as Appointment;
+  isAlive: boolean = true;
+  public selectedDate: Date = new Date();
 
-  constructor(private store: Store, private cdRef:ChangeDetectorRef,private snackBar: SnackbarService) { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedDate']) this.updateHeaderDates();
-  }
+  constructor(private store: Store, private cdRef:ChangeDetectorRef,private snackBar: SnackbarService, private appointmentService:AppointmentsService) { }
 
   ngOnInit(): void {
+    this.getSelectedDate();
     this.getAppointments();
   }
 
   private getAppointments(): void {
-    const subscription = this.store.select(selectAppointments).subscribe((res) => {
+    this.store.select(selectAppointments).pipe(takeWhile(()=>this.isAlive)).subscribe((res) => {
       if (!res) return;
       this.appointments = res;
     })
-    this.subscriptions.push(subscription);
   }
 
   private getStartOfWeek(date: Date): Date {
@@ -200,9 +184,17 @@ export class TimeGridComponent implements OnInit, OnChanges {
     return updatedDate;
   }
 
-  public onCreate(minSlot: number, hourIn12: string): void {
-    const hourIn24 = this.convertTo24Hour(hourIn12);
-    this.createFromGrid.emit({ minSlot, hourIn24 });
+  public onCreate(minSlot: number, hourIn12: string, hourIndex: number): void {
+    let adjustedHour = hourIn12;
+    if (minSlot === 60) { 
+      if (hourIndex === this.hours.length - 1) adjustedHour = this.hours[0];
+      else adjustedHour = this.hours[hourIndex + 1];
+    } 
+    const hourIn24 = this.convertTo24Hour(adjustedHour);
+    const timeSlot: TimeSlot = { minSlot, hourIn24 };
+    let selectedTime:string = hourIn24;
+    if(minSlot!==60) selectedTime = `${hourIn24.split(':')[0]}:${minSlot}`;
+    this.appointmentService.selectTimeSlot(selectedTime);
   }
 
   private formatTime(hour: number): string {
@@ -213,14 +205,20 @@ export class TimeGridComponent implements OnInit, OnChanges {
 
   public selectAppointment(appointment: Appointment): void {
     this.selectedAppointment = appointment;
-    this.onSelect.emit(appointment)
+    this.appointmentService.selectAppointment(appointment);
   }
 
   public onDrop(event: CdkDragDrop<Appointment[]>): void {
     const updatedAppointment = this.getDraggingAppointmentData(event.item.element.nativeElement);
     if (updatedAppointment) this.store.dispatch(updateAppointment({ data: updatedAppointment }));
     this.snackBar.open('Appointment Updated Successfully!');
+  }
 
+  public getSelectedDate() {
+    this.appointmentService.selectedCalenderDate$.pipe(takeWhile(() => this.isAlive)).subscribe((selectedCalenderDate:Date) => {
+      this.selectedDate = selectedCalenderDate;
+      this.updateHeaderDates();
+    })
   }
 
   public onDragStarted(event: CdkDragStart): void {
@@ -274,7 +272,7 @@ export class TimeGridComponent implements OnInit, OnChanges {
   }
 
   ngOnDestroy() {
-    // Preventing Memory Leaks due to unsubscribed observables
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    // Will mark isAlive false which will complete the observables due to takeWhile.
+    this.isAlive = false;
   }
 }

@@ -16,3 +16,8 @@ export interface AppointmentDate {
 export interface DayofWeek {
     name: string, date: Date
 }
+
+export interface TimeSlot {
+    minSlot: number;
+    hourIn24: string
+}

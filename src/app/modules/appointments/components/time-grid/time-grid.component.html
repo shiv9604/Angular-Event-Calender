@@ -31,34 +31,35 @@
     >
       <span
         class="hours-label"
-        *ngFor="let hour of hours; index as i"
+        *ngFor="let hour of hours; index as hourIndex"
         cdkDropList
         (cdkDropListDropped)="onDrop($event)"
         (mouseenter)="setDraggableHours(hour)"
         [attr.data]="hour"
       >
-        <span class="empty-container">
+        <div class="empty-container">
           <div
             class="min-slot"
             *ngFor="let slot of minuteSlots; trackBy: trackByMinuteSlot"
-            (click)="onCreate(slot, hour)"
-            #appointmentParent
+            (click)="onCreate(slot, hour,hourIndex)"
+            (mouseenter)="setMinSlot(slot)"
+            #minSlot
           >
+          <!-- clickable: !isDragging,
+                moveable: isDragging -->
             <div
               class="appointment"
               *ngFor="
-                let appointment of getAppointmentsForTimeSlot(day.date, i);
+                let appointment of getAppointmentsForTimeSlot(day.date, hourIndex);
                 trackBy: trackByAppointment
               "
+              
               [ngClass]="{
-                selected: isSelected(appointment),
-                clickable: !isDragging,
-                moveable: isDragging
+                selected: isSelected(appointment)
               }"
               (click)="selectAppointment(appointment)"
               [ngStyle]="getAppointmentStyle(appointment)"
               [attr.appointment-id]="appointment.id"
-              (mouseenter)="setMinSlot(slot)"
               (cdkDragStarted)="onDragStarted($event)"
               (cdkDragMoved)="onDragMoved($event)"
               (cdkDragEnded)="onDragEnded($event)"
@@ -87,7 +88,7 @@
               </ng-template>
             </div>
           </div>
-        </span>
+        </div>
       </span>
     </div>
   </div>

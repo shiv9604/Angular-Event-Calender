@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectAppointmentById, selectAppointments } from '../../store/appointments.selector';
 import { bookAppointment, updateAppointment } from '../../store/appointments.action';
 import { Appointment } from 'src/app/models/appointment.interfaces';
-import { Subscription, first } from 'rxjs';
+import { combineLatest, debounceTime, first, fromEvent, map, takeWhile} from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { CustomValidators } from 'src/app/shared/validators/custom-validator';
@@ -16,37 +16,48 @@ import { CustomValidators } from 'src/app/shared/validators/custom-validator';
   // Preventing unnecessary chnage detection for Performance Optimisation.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppointmentFormComponent implements OnInit {
-  private today: Date = new Date();
+export class AppointmentFormComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('endTime') endTimeInputRef!: ElementRef;
+  @ViewChild('startTime') startTimeInputRef!: ElementRef;
+
   private appointments!: Appointment[];
   private lastInserted!: Appointment;
   public toUpdate!: Appointment;
-  private subsriptions: Subscription[] = [];
   public appointmentForm: FormGroup = new FormGroup({
     title: new FormControl('', [Validators.required]),
     desc: new FormControl('', [Validators.required, Validators.maxLength(255)]),
     date: new FormControl('', [Validators.required]),
-    startTime: new FormControl('', [Validators.required]),
+    startTime: new FormControl('', [Validators.required, CustomValidators.startTimeValidator]),
     endTime: new FormControl('', [Validators.required, CustomValidators.endTimeValidator])
   });
+  isAlive: boolean = true;
 
   constructor(private store: Store, private cdr: ChangeDetectorRef, private snackBar: SnackbarService, private dialogRef: MatDialogRef<AppointmentFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
+  ngAfterViewInit(): void {
+    this.observeAndValidateTime();
+  }
+
   ngOnInit(): void {
+    this.addDebounceToValidator();
     this.getAppointments();
     this.checkIfUpdate();
-    if(!this.data.id) this.checkForExistingValues();
+    if (!this.data.id) this.checkForExistingValues();
   }
 
   private getAppointments(): void {
-    const subscription = this.store.select(selectAppointments).subscribe((res) => {
+    this.store.select(selectAppointments).pipe(takeWhile(() => this.isAlive), map((appointments: Appointment[] | null) => {
+      if (!appointments || !appointments.length) return;
+      // Sorting array & returning sorted array.
+      let reverseSorted = [...appointments].sort((a, b) => b.id - a.id);
+      return reverseSorted
+    })).subscribe((res) => {
       if (!res) return;
       this.appointments = res;
-      let reverseSorted = [...this.appointments].sort((a, b) => b.id - a.id);
-      this.lastInserted = reverseSorted[0];
+      this.lastInserted = res[0];
       this.cdr.markForCheck();
     })
-    this.subsriptions.push(subscription);
   }
 
   public onSubmit(): void {
@@ -100,6 +111,32 @@ export class AppointmentFormComponent implements OnInit {
     return durationMinutes;
   }
 
+  public addDebounceToValidator() {
+    this.appointmentForm.valueChanges.pipe(takeWhile(() => this.isAlive), debounceTime(300)).subscribe(() => {
+      this.appointmentForm.updateValueAndValidity({ emitEvent: false });
+    })
+  }
+
+  public observeAndValidateTime() {
+    const startTime$ = fromEvent(this.startTimeInputRef?.nativeElement, 'input').pipe(debounceTime(300), map(() => this.startTimeInputRef.nativeElement.value));
+    const endTime$ = fromEvent(this.endTimeInputRef?.nativeElement, 'input').pipe(debounceTime(300), map(() => this.endTimeInputRef.nativeElement.value));
+
+    // Combining Both observables will set value the one emits
+    combineLatest([startTime$, endTime$]).pipe(takeWhile(() => this.isAlive)).subscribe(([startTime, endTime]) => {
+      if(startTime) this.getControl('startTime')?.setValue(startTime, { emitEvent: false });
+      if(endTime) this.getControl('endTime')?.setValue(endTime, { emitEvent: false });
+      this.validateTimeFields();
+    })
+  }
+
+  private validateTimeFields(): void {
+    this.getControl('startTime')?.updateValueAndValidity();
+    this.getControl('endTime')?.updateValueAndValidity();
+    this.endTimeInputRef && this.endTimeInputRef.nativeElement.blur();
+    this.startTimeInputRef && this.startTimeInputRef.nativeElement.blur();
+    this.cdr.markForCheck();
+  }
+
   private checkForExistingValues(): void {
     this.appointmentForm.patchValue({
       startTime: this.data.startTime
@@ -123,11 +160,7 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    // Preventing Memory Leaks due to unsubscribed observables
-    this.subsriptions.forEach(subscription => {
-      subscription.unsubscribe()
-    });
+    // Will mark isAlive false which will complete the observables due to takeWhile.
+    this.isAlive = false;
   }
-
-
 }
