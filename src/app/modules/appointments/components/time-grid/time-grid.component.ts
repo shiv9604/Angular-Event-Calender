@@ -26,7 +26,7 @@ import { ColorPickerService } from 'src/app/shared/services/color-picker/color-p
   // Preventing unnecessary chnage detection for Performance Optimisation.
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeGridComponent implements OnInit{
+export class TimeGridComponent implements OnInit {
   public hours: string[] = Array.from({ length: 24 }, (_, i) => this.formatTime(i));
   public weekdays: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   public days: DayofWeek[] = [];
@@ -43,8 +43,8 @@ export class TimeGridComponent implements OnInit{
   } as Appointment;
   isAlive: boolean = true;
   public selectedDate: Date = new Date();
-  public colorSet : Map<string, string> = new Map<string, string>();
-  constructor(private store: Store, private cdRef:ChangeDetectorRef,private snackBar: SnackbarService, private appointmentService:AppointmentsService, private colorPickerService:ColorPickerService) { }
+  public colorSet: Map<string, string> = new Map<string, string>();
+  constructor(private store: Store, private cdRef: ChangeDetectorRef, private snackBar: SnackbarService, private appointmentService: AppointmentsService, private colorPickerService: ColorPickerService) { }
 
   ngOnInit(): void {
     this.getSelectedDate();
@@ -52,13 +52,13 @@ export class TimeGridComponent implements OnInit{
   }
 
   private getAppointments(): void {
-    this.store.select(selectAppointments).pipe(takeWhile(()=>this.isAlive)).subscribe((res) => {
+    this.store.select(selectAppointments).pipe(takeWhile(() => this.isAlive)).subscribe((res) => {
       if (!res) return;
       this.appointments = res;
       this.appointments = res.map(appointment => ({
         ...appointment,
         // Should differentiate if multiple at same timeslot.
-        bgColor: !appointment.bgColor ?this.colorPickerService.getRandomColor() : appointment.bgColor
+        bgColor: !appointment.bgColor ? this.colorPickerService.getRandomColor() : appointment.bgColor
       }));
     })
   }
@@ -124,7 +124,8 @@ export class TimeGridComponent implements OnInit{
         new Date(appointment.date),
         currentContainerDate
       );
-      const newStartTime = `${newHours}:${existingMinutes}`;
+      // const newStartTime = `${newHours}:${existingMinutes}`;
+      const newStartTime = this.calculateNewStartTime(this.minSlot, newHours);
       const newTime = {
         startTime: this.convertTo24Hour(newStartTime),
         endTime: this.calculateNewEndTime(
@@ -172,6 +173,26 @@ export class TimeGridComponent implements OnInit{
     this.cdRef.markForCheck();
   }
 
+  public calculateNewStartTime(
+    selectedSlot: number,
+    selectedHour: number
+  ): string {
+    let newHour = selectedHour;
+    let newMinute = selectedSlot;
+    if (selectedSlot === 60) {
+      newMinute = 0;
+      newHour = (newHour + 1) % 24;
+    } else {
+      newMinute = selectedSlot;
+    }
+    if (newHour === 0 && selectedSlot === 60) {
+      newHour = 0;
+    }
+    const formattedHour = newHour.toString().padStart(2, '0');
+    const formattedMinute = newMinute.toString().padStart(2, '0');
+    return `${formattedHour}:${formattedMinute}`;
+  }
+
   private calculateNewEndTime(startTime: string, durationMinutes: number): string {
     const [startHour, startMinute] = startTime.split(':').map(Number);
     const startTotalMinutes = startHour * 60 + startMinute;
@@ -192,14 +213,14 @@ export class TimeGridComponent implements OnInit{
 
   public onCreate(minSlot: number, hourIn12: string, hourIndex: number): void {
     let adjustedHour = hourIn12;
-    if (minSlot === 60) { 
+    if (minSlot === 60) {
       if (hourIndex === this.hours.length - 1) adjustedHour = this.hours[0];
       else adjustedHour = this.hours[hourIndex + 1];
-    } 
+    }
     const hourIn24 = this.convertTo24Hour(adjustedHour);
     const timeSlot: TimeSlot = { minSlot, hourIn24 };
-    let selectedTime:string = hourIn24;
-    if(minSlot!==60) selectedTime = `${hourIn24.split(':')[0]}:${minSlot}`;
+    let selectedTime: string = hourIn24;
+    if (minSlot !== 60) selectedTime = `${hourIn24.split(':')[0]}:${minSlot}`;
     this.appointmentService.selectTimeSlot(selectedTime);
   }
 
@@ -221,7 +242,7 @@ export class TimeGridComponent implements OnInit{
   }
 
   public getSelectedDate() {
-    this.appointmentService.selectedCalenderDate$.pipe(takeWhile(() => this.isAlive)).subscribe((selectedCalenderDate:Date) => {
+    this.appointmentService.selectedCalenderDate$.pipe(takeWhile(() => this.isAlive)).subscribe((selectedCalenderDate: Date) => {
       this.selectedDate = selectedCalenderDate;
       this.updateHeaderDates();
     })

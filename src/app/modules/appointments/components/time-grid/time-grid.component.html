@@ -4,6 +4,7 @@
     class="week-day"
     *ngFor="let day of days; trackBy: trackByDate"
     [ngClass]="isActive(day.date) ? 'active' : ''"
+    (mouseenter)="setMinSlot(0)"
   >
     <p class="name">
       <small>{{ day.name }}</small>
