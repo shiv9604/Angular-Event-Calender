@@ -17,6 +17,7 @@ import { selectAppointments } from '../../store/appointments.selector';
 import { updateAppointment } from '../../store/appointments.action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
+import { ColorPickerService } from 'src/app/shared/services/color-picker/color-picker.service';
 
 @Component({
   selector: 'app-time-grid',
@@ -42,8 +43,8 @@ export class TimeGridComponent implements OnInit{
   } as Appointment;
   isAlive: boolean = true;
   public selectedDate: Date = new Date();
-
-  constructor(private store: Store, private cdRef:ChangeDetectorRef,private snackBar: SnackbarService, private appointmentService:AppointmentsService) { }
+  public colorSet : Map<string, string> = new Map<string, string>();
+  constructor(private store: Store, private cdRef:ChangeDetectorRef,private snackBar: SnackbarService, private appointmentService:AppointmentsService, private colorPickerService:ColorPickerService) { }
 
   ngOnInit(): void {
     this.getSelectedDate();
@@ -54,6 +55,11 @@ export class TimeGridComponent implements OnInit{
     this.store.select(selectAppointments).pipe(takeWhile(()=>this.isAlive)).subscribe((res) => {
       if (!res) return;
       this.appointments = res;
+      this.appointments = res.map(appointment => ({
+        ...appointment,
+        // Should differentiate if multiple at same timeslot.
+        bgColor: !appointment.bgColor ?this.colorPickerService.getRandomColor() : appointment.bgColor
+      }));
     })
   }
 

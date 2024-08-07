@@ -45,20 +45,20 @@
             (mouseenter)="setMinSlot(slot)"
             #minSlot
           >
-          <!-- clickable: !isDragging,
-                moveable: isDragging -->
             <div
               class="appointment"
               *ngFor="
                 let appointment of getAppointmentsForTimeSlot(day.date, hourIndex);
                 trackBy: trackByAppointment
               "
-              
               [ngClass]="{
-                selected: isSelected(appointment)
+                'selected': isSelected(appointment),
+                'clickable': !isDragging,
+                'dragging': isDragging
               }"
-              (click)="selectAppointment(appointment)"
               [ngStyle]="getAppointmentStyle(appointment)"
+              [style.backgroundColor]="appointment.bgColor"
+              (click)="selectAppointment(appointment)"
               [attr.appointment-id]="appointment.id"
               (cdkDragStarted)="onDragStarted($event)"
               (cdkDragMoved)="onDragMoved($event)"
@@ -76,7 +76,10 @@
               <ng-template cdkDragPreview>
                 <div
                   class="appointment"
-                  [style.height]="getHeight(appointmentRef)"
+                  [ngStyle]="{
+                   height: getHeight(appointmentRef),
+                   backgroundColor : draggingAppointment.bgColor
+                  }"
                 >
                   {{ draggingAppointment.title }}
                   <br />
