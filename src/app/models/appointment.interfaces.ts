@@ -6,7 +6,7 @@ export interface Appointment {
     startTime: string,
     endTime: string,
     duration?: number,
-    bgColor?:string
+    bgColor:string
 }
 
 export interface AppointmentDate {

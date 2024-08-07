@@ -30,7 +30,7 @@
       cdkDropListGroup
       (mouseenter)="setDraggableDropDate(day.date)"
     >
-      <span
+      <div
         class="hours-label"
         *ngFor="let hour of hours; index as hourIndex"
         cdkDropList
@@ -42,20 +42,23 @@
           <div
             class="min-slot"
             *ngFor="let slot of minuteSlots; trackBy: trackByMinuteSlot"
-            (click)="onCreate(slot, hour,hourIndex)"
+            (click)="onCreate(slot, hour, hourIndex)"
             (mouseenter)="setMinSlot(slot)"
             #minSlot
           >
             <div
-              class="appointment"
+              class="appointment ellipsis"
               *ngFor="
-                let appointment of getAppointmentsForTimeSlot(day.date, hourIndex);
+                let appointment of getAppointmentsForTimeSlot(
+                  day.date,
+                  hourIndex
+                );
                 trackBy: trackByAppointment
               "
               [ngClass]="{
-                'selected': isSelected(appointment),
-                'clickable': !isDragging,
-                'dragging': isDragging
+                selected: isSelected(appointment),
+                clickable: !isDragging,
+                dragging: isDragging
               }"
               [ngStyle]="getAppointmentStyle(appointment)"
               [style.backgroundColor]="appointment.bgColor"
@@ -67,19 +70,21 @@
               cdkDrag
               #appointmentRef
             >
-              {{ appointment.title }}
-              <br />
-              <small class="appointment-time">
-                {{ appointment.startTime | timeConversion }} -
-                {{ appointment.endTime | timeConversion }}
-              </small>
+              <div class="content">
+                {{ appointment.title }}
+                <br />
+                <small class="appointment-time">
+                  {{ appointment.startTime | timeConversion }} -
+                  {{ appointment.endTime | timeConversion }}
+                </small>
+              </div>
 
               <ng-template cdkDragPreview>
                 <div
                   class="appointment"
                   [ngStyle]="{
-                   height: getHeight(appointmentRef),
-                   backgroundColor : draggingAppointment.bgColor
+                    height: getHeight(appointmentRef),
+                    backgroundColor: draggingAppointment.bgColor
                   }"
                 >
                   {{ draggingAppointment.title }}
@@ -93,7 +98,7 @@
             </div>
           </div>
         </div>
-      </span>
+      </div>
     </div>
   </div>
 </div>

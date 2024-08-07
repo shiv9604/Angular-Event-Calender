@@ -4,10 +4,11 @@ import { Store } from '@ngrx/store';
 import { selectAppointmentById, selectAppointments } from '../../store/appointments.selector';
 import { bookAppointment, updateAppointment } from '../../store/appointments.action';
 import { Appointment } from 'src/app/models/appointment.interfaces';
-import { combineLatest, debounceTime, first, fromEvent, map, takeWhile} from 'rxjs';
+import { combineLatest, debounceTime, first, fromEvent, map, takeWhile } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { CustomValidators } from 'src/app/shared/validators/custom-validator';
+import { ColorPickerService } from './../../../../shared/services/color-picker/color-picker.service';
 
 @Component({
   selector: 'app-appointment-form',
@@ -33,7 +34,7 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit {
   });
   isAlive: boolean = true;
 
-  constructor(private store: Store, private cdr: ChangeDetectorRef, private snackBar: SnackbarService, private dialogRef: MatDialogRef<AppointmentFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
+  constructor(private store: Store, private cdr: ChangeDetectorRef, private snackBar: SnackbarService, private colorPickerService: ColorPickerService, private dialogRef: MatDialogRef<AppointmentFormComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngAfterViewInit(): void {
     this.observeAndValidateTime();
@@ -65,7 +66,7 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit {
       this.appointmentForm.markAllAsTouched();
       return;
     }
-    const appointment: Appointment = { ...this.appointmentForm.value };
+    const appointment: Appointment = { ...this.appointmentForm.value, bgColor: this.colorPickerService.getRandomColor() };
     const duration = this.calculateDuration(appointment.startTime, appointment.endTime);
     appointment.duration = duration;
     appointment.date = new Date(appointment.date).toLocaleDateString();
@@ -76,7 +77,7 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit {
   }
 
   public onUpdate(): void {
-    const updated = { ...this.appointmentForm.value };
+    const updated: Appointment = { ...this.appointmentForm.value, bgColor: this.toUpdate.bgColor ?? this.colorPickerService.getRandomColor() };
     updated.date = new Date(updated.date).toLocaleDateString();
     updated.id = this.toUpdate.id;
     this.store.dispatch(updateAppointment({ data: updated }));
@@ -123,8 +124,8 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit {
 
     // Combining Both observables will set value the one emits
     combineLatest([startTime$, endTime$]).pipe(takeWhile(() => this.isAlive)).subscribe(([startTime, endTime]) => {
-      if(startTime) this.getControl('startTime')?.setValue(startTime, { emitEvent: false });
-      if(endTime) this.getControl('endTime')?.setValue(endTime, { emitEvent: false });
+      if (startTime) this.getControl('startTime')?.setValue(startTime, { emitEvent: false });
+      if (endTime) this.getControl('endTime')?.setValue(endTime, { emitEvent: false });
       this.validateTimeFields();
     })
   }

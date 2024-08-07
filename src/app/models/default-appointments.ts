@@ -8,7 +8,8 @@ export const defaultAppointments: Appointment[] = [
         desc: 'Reason 1',
         startTime: '04:30',
         endTime: '06:30',
-        duration : 120,
+        duration: 120,
+        bgColor : '#5268e5'
     },
     {
         id : 2,
@@ -17,7 +18,8 @@ export const defaultAppointments: Appointment[] = [
         desc: 'Reason 2',
         startTime: '00:00',
         endTime: '01:00',
-        duration : 60,
+        duration: 60,
+        bgColor : '#002F6C'
     },
     {
         id : 3,
@@ -26,7 +28,8 @@ export const defaultAppointments: Appointment[] = [
         desc: 'Reason 3',
         startTime: '00:45',
         endTime: '03:15',
-        duration : 150,
+        duration: 150,
+        bgColor : '#3D0A4A'
     },
     {
         id : 4,
@@ -35,7 +38,8 @@ export const defaultAppointments: Appointment[] = [
         desc: 'Reason 4',
         startTime: '05:30',
         endTime : '08:30',
-        duration : 180
+        duration: 180,
+        bgColor : '#004d4d'
     },
     {
         id : 5,
@@ -44,6 +48,7 @@ export const defaultAppointments: Appointment[] = [
         desc: 'Reason 5',
         startTime: '04:00',
         endTime: '04:45',
-        duration : 45,
+        duration: 45,
+        bgColor : '#333333'
     },
 ]

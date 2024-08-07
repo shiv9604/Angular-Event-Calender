@@ -21,7 +21,7 @@ export class AppointmentsCalenderNewComponent implements OnInit {
   public selectedDate: Date = new Date();
   private isAlive: boolean = true;
 
-  constructor(private dialog: MatDialog, private store: Store, private appointmentService:AppointmentsService) { }
+  constructor(private dialog: MatDialog, private store: Store, private appointmentService: AppointmentsService) { }
 
   ngOnInit(): void {
     this.observeSelectedAppointment();
@@ -31,10 +31,11 @@ export class AppointmentsCalenderNewComponent implements OnInit {
   public view(appointment: Appointment): void {
     const dialogRef = this.dialog.open(ViewAppointmentComponent, {
       minWidth: '35%',
+      maxWidth: '70%',
       data: { selectedDate: this.selectedDate, appointment }
     })
 
-    dialogRef.afterClosed().pipe(takeWhile(()=>this.isAlive)).subscribe((res: { type: string, appointment: Appointment }) => {
+    dialogRef.afterClosed().pipe(takeWhile(() => this.isAlive)).subscribe((res: { type: string, appointment: Appointment }) => {
       if (res?.type == 'EDIT') {
         this.edit(appointment);
         return
@@ -49,13 +50,15 @@ export class AppointmentsCalenderNewComponent implements OnInit {
   public create(): void {
     this.dialog.open(AppointmentFormComponent, {
       minWidth: '35%',
+      maxWidth: '70%',
       data: { selectedDate: this.selectedDate }
     })
   }
 
-  public createFromGrid(startTime:string): void {
+  public createFromGrid(startTime: string): void {
     this.dialog.open(AppointmentFormComponent, {
       minWidth: '35%',
+      maxWidth: '70%',
       data: { selectedDate: this.selectedDate, startTime }
     })
   }
@@ -63,6 +66,7 @@ export class AppointmentsCalenderNewComponent implements OnInit {
   public edit(appointment: Appointment): void {
     this.dialog.open(AppointmentFormComponent, {
       minWidth: '35%',
+      maxWidth: '70%',
       data: { id: appointment.id, selectedDate: this.selectedDate }
     })
   }
@@ -83,7 +87,7 @@ export class AppointmentsCalenderNewComponent implements OnInit {
   }
 
   public observeSelectedAppointment() {
-    this.appointmentService.selectedAppointment$.pipe(takeWhile(() => this.isAlive)).subscribe((selectedAppointment:Appointment) => {
+    this.appointmentService.selectedAppointment$.pipe(takeWhile(() => this.isAlive)).subscribe((selectedAppointment: Appointment) => {
       this.view(selectedAppointment);
     })
   }

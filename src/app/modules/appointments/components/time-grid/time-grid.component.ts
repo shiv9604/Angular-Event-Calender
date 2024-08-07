@@ -55,7 +55,7 @@ export class TimeGridComponent implements OnInit {
     this.store.select(selectAppointments).pipe(takeWhile(() => this.isAlive)).subscribe((res) => {
       if (!res) return;
       this.appointments = res;
-      this.appointments = res.map(appointment => ({
+      this.appointments = this.appointments.map((appointment: Appointment) => ({
         ...appointment,
         // Should differentiate if multiple at same timeslot.
         bgColor: !appointment.bgColor ? this.colorPickerService.getRandomColor() : appointment.bgColor
@@ -218,7 +218,6 @@ export class TimeGridComponent implements OnInit {
       else adjustedHour = this.hours[hourIndex + 1];
     }
     const hourIn24 = this.convertTo24Hour(adjustedHour);
-    const timeSlot: TimeSlot = { minSlot, hourIn24 };
     let selectedTime: string = hourIn24;
     if (minSlot !== 60) selectedTime = `${hourIn24.split(':')[0]}:${minSlot}`;
     this.appointmentService.selectTimeSlot(selectedTime);

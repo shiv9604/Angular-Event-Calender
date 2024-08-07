@@ -7,13 +7,10 @@ export class ColorPickerService {
   // We can keep colors according to color palette.
   colors = [
     '#003366', // Deep Blue
-    '#C8102E', // Dark Red
-    '#004d00', // Dark Green
     '#333333', // Charcoal Gray
     '#3D0A4A', // Royal Purple
     '#004d4d', // Dark Teal
-    '#800020', // Burgundy
-    '#002F6C', // Navy Blue
+    '#5268e5', // Default Color
     '#2F4F4F'  // Slate Gray
   ];
   private lastColor: string | null = null;

@@ -80,7 +80,18 @@ button > *{
 .moveable{
     cursor: move !important;
 }
-/* 
+.ellipsis {
+    overflow: hidden;     
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wrap-text {
+    white-space: normal; 
+    overflow-wrap: break-word;
+    word-wrap: break-word; 
+    word-break: break-word;
+  }
+
 .text-center{
     text-align: center;
 }
@@ -151,7 +162,7 @@ button > *{
 
 .fs-30{
     font-size: 30px;
-} */
+}
 mat-form-field{
     width: 100%;
 }
