@@ -4,11 +4,12 @@ import { RouteNotFoundComponent } from './route-not-found/route-not-found.compon
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TimeConversionPipe } from './pipes/timeConversion/time-conversion.pipe';
 
 
 
 @NgModule({
-  declarations: [RouteNotFoundComponent],
+  declarations: [RouteNotFoundComponent, TimeConversionPipe],
   imports: [
     CommonModule,
     RouterModule,
@@ -18,6 +19,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   exports: [
     RouteNotFoundComponent,
+    TimeConversionPipe,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule

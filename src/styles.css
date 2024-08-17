@@ -3,6 +3,9 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: rgba(204, 204, 204, 0.411); }
 
+/* p,h1,h2,h3,h4,h5,h6{
+    margin: 0px !important;
+} */
 
 .main{
     width: 70%;
@@ -11,22 +14,27 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-
     /* border: 1px solid red; */
     height: calc(100% - 62px);
 }
+/* @media only screen and (min-width:1441px){
+    .main{
+        width: 80%;
+    }
+} */
 .header{
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
     background-color: rgba(0, 0, 0, 0.753);
-    height: 10%;
+    height: 8%;
     width: 100%;
     font-size: 26px;
     position: relative;
-
 }
 
 .body{
-    padding: 30px;
-    height: calc((100% - 10%) - 30px);
+    padding: 20px;
+    /* height: calc((100% - 10%) - 30px); */
+    height: calc(92% - 40px);
     background-color: white;
     position: relative;
 }
@@ -39,8 +47,51 @@ button > *{
     cursor: pointer !important;
 }
 
+.border-danger{
+    border: 1px solid red;
+}
 
-/* 
+.border-primary{
+    border: 1px solid blue;
+}
+.modal-header{
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.icon-details{
+    display: flex;
+    gap: 2;
+    align-items: top;
+    padding: 0 20px;
+}
+
+.icon-details mat-icon{
+    margin: 0px 15px 0 0;
+    color: gray;
+}
+
+.clickable{
+    cursor: pointer !important;
+}
+
+.moveable{
+    cursor: move !important;
+}
+.ellipsis {
+    overflow: hidden;     
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wrap-text {
+    white-space: normal; 
+    overflow-wrap: break-word;
+    word-wrap: break-word; 
+    word-break: break-word;
+  }
+
 .text-center{
     text-align: center;
 }
@@ -111,7 +162,7 @@ button > *{
 
 .fs-30{
     font-size: 30px;
-} */
+}
 mat-form-field{
     width: 100%;
 }

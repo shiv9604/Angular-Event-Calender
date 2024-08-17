@@ -15,7 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
+import {MatCardModule} from '@angular/material/card';
 
 const MatModules = [
   MatButtonModule,
@@ -32,7 +32,9 @@ const MatModules = [
   MatNativeDateModule,
   MatRippleModule,
   MatTooltipModule,
-  DragDropModule
+  DragDropModule,
+  MatDatepickerModule,
+  MatCardModule
 ];
 @NgModule({
   declarations: [],

@@ -1,14 +1,24 @@
-export interface Appointment{
-    id : number,
-    userName: string,
-    email: string,
+export interface Appointment {
+    id: number,
     date: string,
-    title : string,
+    title: string,
     desc: string,
-    time : string
+    startTime: string,
+    endTime: string,
+    duration?: number,
+    bgColor:string
 }
 
-export interface AppointmentDate{
+export interface AppointmentDate {
     day: number,
     appointments: Appointment[]
+}
+
+export interface DayofWeek {
+    name: string, date: Date
+}
+
+export interface TimeSlot {
+    minSlot: number;
+    hourIn24: string
 }

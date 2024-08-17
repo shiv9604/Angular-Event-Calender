@@ -1,0 +1,104 @@
+<div class="weekday-row">
+  <div class="week-day default-col"></div>
+  <div
+    class="week-day"
+    *ngFor="let day of days; trackBy: trackByDate"
+    [ngClass]="isActive(day.date) ? 'active' : ''"
+    (mouseenter)="setMinSlot(0)"
+  >
+    <p class="name">
+      <small>{{ day.name }}</small>
+    </p>
+    <div class="date">
+      <p>{{ day.date | date : "d" }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="hours-row">
+  <div class="default-col day">
+    <span class="hours-label" *ngFor="let hour of hours">
+      <span class="value">
+        {{ hour }}
+      </span>
+    </span>
+  </div>
+
+  <div class="dynamic-col day" *ngFor="let day of days; trackBy: trackByDate">
+    <div
+      class="hours"
+      cdkDropListGroup
+      (mouseenter)="setDraggableDropDate(day.date)"
+    >
+      <div
+        class="hours-label"
+        *ngFor="let hour of hours; index as hourIndex"
+        cdkDropList
+        (cdkDropListDropped)="onDrop($event)"
+        (mouseenter)="setDraggableHours(hour)"
+        [attr.data]="hour"
+      >
+        <div class="empty-container">
+          <div
+            class="min-slot"
+            *ngFor="let slot of minuteSlots; trackBy: trackByMinuteSlot"
+            (click)="onCreate(slot, hour, hourIndex)"
+            (mouseenter)="setMinSlot(slot)"
+            #minSlot
+          >
+            <div
+              class="appointment ellipsis"
+              *ngFor="
+                let appointment of getAppointmentsForTimeSlot(
+                  day.date,
+                  hourIndex
+                );
+                trackBy: trackByAppointment
+              "
+              [ngClass]="{
+                selected: isSelected(appointment),
+                clickable: !isDragging,
+                dragging: isDragging
+              }"
+              [ngStyle]="getAppointmentStyle(appointment)"
+              [style.backgroundColor]="appointment.bgColor"
+              (click)="selectAppointment(appointment)"
+              [attr.appointment-id]="appointment.id"
+              (cdkDragStarted)="onDragStarted($event)"
+              (cdkDragMoved)="onDragMoved($event)"
+              (cdkDragEnded)="onDragEnded($event)"
+              cdkDrag
+              #appointmentRef
+            >
+              <div class="content">
+                {{ appointment.title }}
+                <br />
+                <small class="appointment-time">
+                  {{ appointment.startTime | timeConversion }} -
+                  {{ appointment.endTime | timeConversion }}
+                </small>
+              </div>
+
+              <ng-template cdkDragPreview>
+                <div
+                  class="appointment"
+                  [ngStyle]="{
+                    height: getHeight(appointmentRef),
+                    backgroundColor: draggingAppointment.bgColor
+                  }"
+                >
+                  {{ draggingAppointment.title }}
+                  <br />
+                  <small class="appointment-time">
+                    {{ draggingAppointment.startTime | timeConversion }} -
+                    {{ draggingAppointment.endTime | timeConversion }}
+                  </small>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

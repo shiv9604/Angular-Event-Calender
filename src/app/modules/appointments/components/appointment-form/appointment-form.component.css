@@ -1,31 +1,32 @@
-.header{
+.header {
     text-align: center;
 }
 
-.appointment-form{
+.appointment-form {
     text-align: center;
 }
-.actions button{
+
+.actions button {
     width: 45%;
 }
 
-.time{
+.time {
     margin-top: 15px;
     font-size: 20px;
 }
 
-.actions{
+.actions {
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
 
-.back-btn{
+.back-btn {
     position: absolute;
     left: 3%;
-    
+
 }
 
-.back-btn mat-icon{
+.back-btn mat-icon {
     font-size: 26px;
 }

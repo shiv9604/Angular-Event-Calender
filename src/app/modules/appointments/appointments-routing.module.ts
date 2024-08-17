@@ -1,26 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppointmentsCalenderComponent } from './appointments-calender/appointments-calender.component';
-import { AppointmentFormComponent } from './appointment-form/appointment-form.component';
+import { AppointmentFormComponent } from './components/appointment-form/appointment-form.component';
+import { AppointmentsCalenderNewComponent } from './pages/appointments-calender-new/appointments-calender-new.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'calender',
+    redirectTo: 'calender-new',
     pathMatch : 'full'
   },
   {
-    path: 'calender',
-    component : AppointmentsCalenderComponent    
+    path: 'calender-new',
+    component : AppointmentsCalenderNewComponent    
   },
-  {
-    path: 'create',
-    component : AppointmentFormComponent
-  },
-  {
-    path: 'edit/:id',
-    component : AppointmentFormComponent
-  }
 ];
 
 @NgModule({
