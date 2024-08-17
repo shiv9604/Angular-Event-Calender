@@ -1,6 +1,6 @@
 <div class="modal-header">
-  <h2 class="title" *ngIf="!toUpdate">Create Appointment</h2>
-  <h2 class="title" *ngIf="toUpdate">Update Appointment</h2>
+  <h2 class="title" *ngIf="!toUpdate">Create Event</h2>
+  <h2 class="title" *ngIf="toUpdate">Update Event</h2>
   <hr />
   <button mat-icon-button (click)="onClose()">
     <mat-icon class="mat-18">close</mat-icon>
@@ -64,7 +64,7 @@
       [disabled]="!isValid"
       *ngIf="!toUpdate"
     >
-      Create Appointment
+      Create Event
     </button>
     <button
       mat-flat-button
@@ -73,7 +73,7 @@
       (click)="onUpdate()"
       [disabled]="!isValid"
     >
-      Update Appointment
+      Update Event
     </button>
     <button mat-flat-button color="accent" (click)="onCancel()">Cancel</button>
   </div>

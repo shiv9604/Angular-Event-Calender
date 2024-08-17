@@ -3,8 +3,8 @@ import { Appointment } from "./appointment.interfaces";
 export const defaultAppointments: Appointment[] = [
     {
         id : 1,
-        date: '8/04/2024',
-        title : 'Appointment 1',
+        date: '8/12/2024',
+        title : 'Scrum Meeting',
         desc: 'Reason 1',
         startTime: '04:30',
         endTime: '06:30',
@@ -13,8 +13,8 @@ export const defaultAppointments: Appointment[] = [
     },
     {
         id : 2,
-        date: '8/09/2024',
-        title : 'Appointment 2',
+        date: '8/13/2024',
+        title : 'Technical Training',
         desc: 'Reason 2',
         startTime: '00:00',
         endTime: '01:00',
@@ -23,8 +23,8 @@ export const defaultAppointments: Appointment[] = [
     },
     {
         id : 3,
-        date: '8/05/2024',
-        title : 'Appointment 3',
+        date: '8/11/2024',
+        title : 'Client Meeting',
         desc: 'Reason 3',
         startTime: '00:45',
         endTime: '03:15',
@@ -33,8 +33,8 @@ export const defaultAppointments: Appointment[] = [
     },
     {
         id : 4,
-        date: '8/7/2024',
-        title : 'Appointment 4',
+        date: '8/14/2024',
+        title : 'Friday Indoor Games',
         desc: 'Reason 4',
         startTime: '05:30',
         endTime : '08:30',
@@ -43,8 +43,8 @@ export const defaultAppointments: Appointment[] = [
     },
     {
         id : 5,
-        date: '8/9/2024',
-        title : 'Appointment 5',
+        date: '8/16/2024',
+        title : 'Doctor Appointment',
         desc: 'Reason 5',
         startTime: '04:00',
         endTime: '04:45',
